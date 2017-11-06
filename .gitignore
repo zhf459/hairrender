@@ -1,0 +1,16 @@
+*.user*
+*.o
+moc_*
+ui_mainwindow.h
+Makefile
+qrc_*.cpp
+hair
+
+
+*.stash
+
+*.autosave
+
+ui_sceneeditor.h
+
+hair.app/Contents/MacOS/output.png

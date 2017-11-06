@@ -1,0 +1,26 @@
+<RCC>
+    <qresource prefix="/shaders">
+        <file>constants.glsl</file>
+        <file>opacitymapping.glsl</file>
+        <file>depthpeel.glsl</file>
+        <file>hairlighting.glsl</file>
+        <file>meshlighting.glsl</file>
+        <file>mesh.frag</file>
+        <file>meshdepthpeel.frag</file>
+        <file>mesh.vert</file>
+        <file>hair.frag</file>
+        <file>hairDepthPeel.frag</file>
+        <file>hairOpacity.frag</file>
+        <file>hair.vert</file>
+        <file>hair.tcs</file>
+        <file>hair.tes</file>
+        <file>hair.geom</file>
+        <file>texturedquad.frag</file>
+        <file>texturedquad.vert</file>
+        <file>white.frag</file>
+        <file>hairrender.vert</file>
+        <file>hairFeedback.geom</file>
+        <file>hairFeedback.tes</file>
+        <file>hairrender.vert</file>
+    </qresource>
+</RCC>

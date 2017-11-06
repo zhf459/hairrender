@@ -1,0 +1,16 @@
+#version 400 core
+
+layout(vertices = 4) out;
+
+uniform int numPatchHairs;
+uniform int numSplineVertices;
+
+#define ID gl_InvocationID
+
+void main()
+{
+    if (ID == 0) {
+        gl_TessLevelOuter[0] = numPatchHairs;
+        gl_TessLevelOuter[1] = numSplineVertices - 1;
+    }
+}
