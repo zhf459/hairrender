@@ -83,6 +83,37 @@ Hair::Hair(std::vector<glm::vec3> strand) {
     m_patch.setAttribute(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 }
 
+Hair::Hair(std::vector<glm::vec3> strand, std::vector<glm::vec3> colors){
+    m_numSegments = strand.size();
+    float length = 0;
+    for (int i = 0; i < strand.size(); ++i) {
+        HairVertex *newVert = new HairVertex(strand.at(i));
+        if (i > 0)
+        {
+            HairVertex *oldVert = m_vertices.at(i - 1);
+            double dot = CLAMP(glm::dot(oldVert->position - newVert->position, glm::vec3(0, -1, 0)), -1.0, 1.0);
+            double det = CLAMP(glm::dot(oldVert->position - newVert->position, glm::vec3(1, 0, 0)), -1.0, 1.0);
+            newVert->theta = -atan2(det, dot);
+            newVert->pointVector = oldVert->position - newVert->position;
+        }
+        newVert->pointColor = colors.at(i);
+        length += glm::length(newVert->pointVector);
+        newVert->segLen = glm::length(newVert->pointVector);
+        m_vertices.append(newVert);
+    }
+    m_length = length;
+    //m_triangleFace[0] = glm::vec3(0.0f);
+    //m_triangleFace[1] = glm::vec3(0.0f);
+
+    GLfloat data[] = {-.5, +.5, 0,
+                      +.5, +.5, 0,
+                      -.5, -.5, 0,
+                      +.5, -.5, 0};
+    m_patch.create();
+    m_patch.setVertexData(data, sizeof(data), 4);
+    m_patch.setAttribute(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+}
+
 Hair::~Hair()
 {
     m_patch.destroy();
@@ -99,12 +130,11 @@ void Hair::paint(ShaderProgram *_program)
 {
     _program->uniforms.triangleFace[0] = m_triangleFace[0];
     _program->uniforms.triangleFace[1] = m_triangleFace[1];
-    //cout<<m_vertices.size()<<endl;
     _program->uniforms.numHairVertices = MIN(m_vertices.size(), MAX_HAIR_VERTICES);
     _program->uniforms.length = m_length;
-    //_program->uniforms.color=glm::vec3(200,10,10);
     for (int i = 0; i < _program->uniforms.numHairVertices; i++){
         _program->uniforms.vertexData[i] = m_vertices.at(i)->position;
+        _program->uniforms.colorData[i] = m_vertices.at(i)->pointColor;
     }
     _program->setPerDrawUniforms();
 

@@ -46,5 +46,6 @@ void HairShaderProgram::setPerDrawUniforms()
     setUniform1f("hairLength", uniforms.length);
     setUniform1i("numHairSegments", uniforms.numHairVertices-1);
     setUniform3fv("vertexData", uniforms.numHairVertices, uniforms.vertexData);
+    setUniform3fv("colorData", uniforms.numHairVertices, uniforms.colorData);
     setUniform3fv("triangleFace", 2, uniforms.triangleFace);
 }

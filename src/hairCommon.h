@@ -156,6 +156,7 @@ struct HairVertex
     glm::vec3 startPosition;
     glm::vec3 prevPos;
     glm::vec3 pointVector;
+    glm::vec3 pointColor;
     double    theta;
     double    omega;
     float    segLen;
@@ -167,6 +168,7 @@ struct HairVertex
         position = glm::vec3(0.0);
         velocity = glm::vec3(0.0);
         prevPos = glm::vec3(0.0);
+        pointColor = glm::vec3(0.0);
         omega = 0.0;
         theta = 0.0;
         segLen = 0.0;

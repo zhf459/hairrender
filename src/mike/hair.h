@@ -11,6 +11,7 @@ class Hair
 public:
     Hair(int numSegments, double length, glm::vec3 location, glm::vec3 dir, glm::vec3 normal);
     Hair(std::vector<glm::vec3>);
+    Hair(std::vector<glm::vec3> strands, std::vector<glm::vec3> colors);   //Constructor for hair with per vertex color
 
     virtual ~Hair();
 

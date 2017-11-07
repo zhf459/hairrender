@@ -18,6 +18,8 @@ struct Uniforms {
 
     glm::vec3 vertexData[MAX_HAIR_VERTICES]; // Vertex position data for the current guide hair.
 
+    glm::vec3 colorData[MAX_HAIR_VERTICES]; // vertex color data for the current guide hair.
+
     int numGroupHairs; // Number of single-hair-interpolated hairs per guide hair.
 
     int numSplineVertices; // Number of vertices rendered with a spline.

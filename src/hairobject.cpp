@@ -57,12 +57,31 @@ bool read_bin(const char *filename, std::vector<Strand>& strands)
 	return true;
 }
 
-bool read_cvhair(const char *filename, std::vector<Strand>& strands){
+bool read_cvhair(const char *filename, std::vector<Strand>& strands, std::vector<Strand>& colors){
     cyHairFile hairfile;
     hairfile.LoadFromFile(filename);
     int hairCount = hairfile.GetHeader().hair_count;
+    int pointCount = hairfile.GetHeader().point_count;
+    bool randomcolor = false;
     strands.clear();
     strands.resize(hairCount);
+    colors.clear();
+    colors.resize(hairCount);
+    string colorfile = filename.substr(0,filename.size()-4)+"bin";
+    FILE *pfile;
+    pfile = fopen(colorfile.c_str(),"rb");
+    int returnvalue = 0;
+    if(pfile!=NULL)
+    {
+        returnvalue = fread(colorvalue,sizeof(double),pointCount *3,pfile);
+        fclose(pfile);
+    }
+
+    if(returnvalue != pointCount *3)
+    {
+        cout<<"no valid color values found from "<<colorfile<<endl;
+        randomcolor = true;
+    }
     //int pointCount = hairfile.GetHeader().point_count;
     cout<<"hair count:"<<hairCount<<endl;
     int pointIndex = 0;
@@ -72,17 +91,37 @@ bool read_cvhair(const char *filename, std::vector<Strand>& strands){
     //for(int hairIndex=0;hairIndex<hairCount;hairIndex++)
     //	cout<<segments[hairIndex]<<",";
     if(segments) {
-        for(int hairIndex=0;hairIndex<hairCount;hairIndex++) {
-            for(int j=pointIndex;j<pointIndex+segments[hairIndex]+1;j++) {
+        if(randomcolor){
+            for(int hairIndex=0;hairIndex<hairCount;hairIndex++) {
+                float r = ((float) rand()) / (float) RAND_MAX ;
+                float g = ((float) rand()) / (float) RAND_MAX ;
+                float b = ((float) rand()) / (float) RAND_MAX ;
+                for(int j=pointIndex;j<pointIndex+segments[hairIndex]+1;j++) {
                     float p0[3];
                     p0[0]=arrays[3*j];
                     p0[1]=arrays[3*j+1];
                     p0[2]=arrays[3*j+2];
                     strands[hairIndex].push_back(glm::vec3(p0[0],p0[1],p0[2]));
+                    colors[hairIndex].push_back(glm::vec3(r,g,b));
                 }
                 pointIndex += segments[hairIndex]+1;
                 count+=1;
             }
+        }
+        else{
+            for(int hairIndex=0;hairIndex<hairCount;hairIndex++) {
+                for(int j=pointIndex;j<pointIndex+segments[hairIndex]+1;j++) {
+                    float p0[3];
+                    p0[0]=arrays[3*j];
+                    p0[1]=arrays[3*j+1];
+                    p0[2]=arrays[3*j+2];
+                    strands[hairIndex].push_back(glm::vec3(p0[0],p0[1],p0[2]));
+                    colors[hairIndex].push_back(glm::vec3(colorvalue[3*j],colorvalue[3*j+1],colorvalue[3*j+2]));
+                }
+                pointIndex += segments[hairIndex]+1;
+                count+=1;
+            }
+        }
         }
         else
             cout<<"none hair segs."<<endl;
