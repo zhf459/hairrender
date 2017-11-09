@@ -28,7 +28,7 @@
 
 #define SHIFT_CLICK true
 
-#define FEEDBACK true
+#define FEEDBACK false
 
 extern std::string hairstyle_file;
 GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *parent)

@@ -57,7 +57,7 @@ bool read_bin(const char *filename, std::vector<Strand>& strands)
 	return true;
 }
 
-bool read_cvhair(const char *filename, std::vector<Strand>& strands, std::vector<Strand>& colors){
+bool read_cvhair(const char *filename, std::vector<Strand>& strands, std::vector<glm::vec3>& perStrandColor){
     cyHairFile hairfile;
     hairfile.LoadFromFile(filename);
     int hairCount = hairfile.GetHeader().hair_count;
@@ -65,9 +65,11 @@ bool read_cvhair(const char *filename, std::vector<Strand>& strands, std::vector
     bool randomcolor = false;
     strands.clear();
     strands.resize(hairCount);
-    colors.clear();
-    colors.resize(hairCount);
-    string colorfile = filename.substr(0,filename.size()-4)+"bin";
+    perStrandColor.clear();
+    perStrandColor.resize(hairCount);
+    double *colorvalue = new double [pointCount*3]();
+    std::string filestring = filename;
+    std::string colorfile = filestring.substr(0,filestring.size()-4)+"bin";
     FILE *pfile;
     pfile = fopen(colorfile.c_str(),"rb");
     int returnvalue = 0;
@@ -96,13 +98,14 @@ bool read_cvhair(const char *filename, std::vector<Strand>& strands, std::vector
                 float r = ((float) rand()) / (float) RAND_MAX ;
                 float g = ((float) rand()) / (float) RAND_MAX ;
                 float b = ((float) rand()) / (float) RAND_MAX ;
+                perStrandColor[hairIndex] = glm::vec3(r,g,b);
                 for(int j=pointIndex;j<pointIndex+segments[hairIndex]+1;j++) {
                     float p0[3];
                     p0[0]=arrays[3*j];
                     p0[1]=arrays[3*j+1];
                     p0[2]=arrays[3*j+2];
                     strands[hairIndex].push_back(glm::vec3(p0[0],p0[1],p0[2]));
-                    colors[hairIndex].push_back(glm::vec3(r,g,b));
+                    //colors[hairIndex].push_back(glm::vec3(r,g,b));
                 }
                 pointIndex += segments[hairIndex]+1;
                 count+=1;
@@ -110,14 +113,17 @@ bool read_cvhair(const char *filename, std::vector<Strand>& strands, std::vector
         }
         else{
             for(int hairIndex=0;hairIndex<hairCount;hairIndex++) {
+                perStrandColor[hairIndex] = glm::vec3(0.0);
                 for(int j=pointIndex;j<pointIndex+segments[hairIndex]+1;j++) {
                     float p0[3];
                     p0[0]=arrays[3*j];
                     p0[1]=arrays[3*j+1];
                     p0[2]=arrays[3*j+2];
                     strands[hairIndex].push_back(glm::vec3(p0[0],p0[1],p0[2]));
-                    colors[hairIndex].push_back(glm::vec3(colorvalue[3*j],colorvalue[3*j+1],colorvalue[3*j+2]));
+                    perStrandColor[hairIndex] += glm::vec3(colorvalue[3*j],colorvalue[3*j+1],colorvalue[3*j+2]);
+                    //colors[hairIndex].push_back(glm::vec3(colorvalue[3*j],colorvalue[3*j+1],colorvalue[3*j+2]));
                 }
+                perStrandColor[hairIndex] /= (segments[hairIndex]+1);
                 pointIndex += segments[hairIndex]+1;
                 count+=1;
             }
@@ -205,6 +211,8 @@ HairObject::HairObject(const char* filename,
         HairObject *oldObject
         ) {
     std::vector<Strand> strands;
+    //std::vector<Strand> colors;
+    std::vector<glm::vec3> perStrandColor;
 
     m_hairGrowthMap = hairGrowthMap;
     m_hairGroomingMap = hairGroomingMap;
@@ -213,12 +221,13 @@ HairObject::HairObject(const char* filename,
     m_blurredHairGrowthMapTexture = new Texture();
     m_blurredHairGrowthMapTexture->createColorTexture(blurredImage, GL_LINEAR, GL_LINEAR);
 
-    read_bin(filename, strands);
-    //read_cvhair(filename,strands);
+    //read_bin(filename, strands);
+    read_cvhair(filename,strands,perStrandColor);
+    //cout<<perStrandColor.at(0)[0]<<","<<perStrandColor.at(0)[1]<<","<<perStrandColor.at(0)[2]<<endl;
 
     for(int i = 0; i < strands.size(); ++i) {
     //for(int i = 0; i < 2000; ++i) {
-        m_guideHairs.append(new Hair(strands.at(i)));
+        m_guideHairs.append(new Hair(strands.at(i),perStrandColor.at(i)));
     }
     setAttributes(oldObject);
     m_simulation = simulation;
@@ -248,11 +257,6 @@ void HairObject::setAttributes(HairObject *_oldObject){
 }
 
 void HairObject::setAttributes(glm::vec3 _color, int _numGroupHairs, float _hairGroupSpread, float _hairRadius, float _noiseAmplitude, float _noiseFrequency, int _numSplineVertices, float _shadowIntensity, float _diffuseIntensity, float _specularIntensity, float _transparency, float _useHairColorVariation, float _hairColorVariation){
-    //float r = ((float) rand()) / (float) RAND_MAX ;
-    //float g = ((float) rand()) / (float) RAND_MAX ;
-    //float b = ((float) rand()) / (float) RAND_MAX ;
-    //program->uniforms.color = glm::rgbColor(glm::vec3(0.5, 0.5, 0.5));
-    //m_color = glm::rgbColor(glm::vec3(200, 10, 10));
     m_color= _color;
     m_numGroupHairs = _numGroupHairs;
     m_hairGroupSpread = _hairGroupSpread;
@@ -292,15 +296,17 @@ void HairObject::paint(ShaderProgram *program){
     program->uniforms.numSplineVertices = m_numSplineVertices;
     program->setPerObjectUniforms();
 
+    //cout<<m_guideHairs[0]->perStrandColor[0]<<","<<m_guideHairs[0]->perStrandColor[1]<<","<<m_guideHairs[0]->perStrandColor[2]<<endl;
     //cout<<m_guideHairs.size()<<endl;
     //for(int i=0;i<200;i++)
     for (int i = 0; i < m_guideHairs.size(); i++)
     {
-        float r = ((float) rand()) / (float) RAND_MAX ;
-        float g = ((float) rand()) / (float) RAND_MAX ;
-        float b = ((float) rand()) / (float) RAND_MAX ;
-        program->uniforms.color = glm::rgbColor(glm::vec3(128, 128, 128));
-        //program->setPerObjectUniforms();
+        //float r = ((float) rand()) / (float) RAND_MAX ;
+        //float g = ((float) rand()) / (float) RAND_MAX ;
+        //float b = ((float) rand()) / (float) RAND_MAX ;
+        //program->uniforms.color = glm::vec3(r,g,b);
+        program->uniforms.color = m_guideHairs[i]->perStrandColor;
+        program->setPerObjectUniforms();
         m_guideHairs.at(i)->paint(program);
     }
 

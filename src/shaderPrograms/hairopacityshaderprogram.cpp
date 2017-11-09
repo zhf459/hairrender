@@ -39,4 +39,5 @@ void HairOpacityShaderProgram::setPerDrawUniforms()
     setUniform3fv("vertexData", uniforms.numHairVertices, uniforms.vertexData);
     setUniform3fv("colorData",uniforms.numHairVertices,uniforms.colorData);
     setUniform3fv("triangleFace", 2, uniforms.triangleFace);
+    setUniform3f("color", uniforms.color);
 }
