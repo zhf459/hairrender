@@ -35,18 +35,18 @@ public:
     void setAttributes(HairObject *_oldObject);
     void setAttributes(
             glm::vec3 _color = glm::vec3(15./255, .286f, .202f),
-            int _numGroupHairs = 4,
+            int _numGroupHairs = 2,
             float _hairGroupSpread = 0.08,
-            float _hairRadius = 0.001f,
-            float _noiseAmplitude = 0.15f,
-            float _noiseFrequency = 0.2f,
+            float _hairRadius = 0.0007f,
+            float _noiseAmplitude = 0.01f,
+            float _noiseFrequency = 0.01f,
             int _numSplineVertices = 20,
             float _shadowIntensity = 20,
             float _diffuseIntensity = 1,
             float _specularIntensity = .5,
             float _transparency = .25,
             float _useHairColorVariation = true,
-            float _hairColorVariation = 1.5f);
+            float _hairColorVariation = 0.5f);
 
 public:
 

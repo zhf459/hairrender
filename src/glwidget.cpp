@@ -31,6 +31,9 @@
 #define FEEDBACK false
 
 extern std::string hairstyle_file;
+extern float X_angle;
+extern float Y_angle;
+extern float Z_angle;
 GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *parent)
     : QGLWidget(format, parent),
       m_hairInterface(hairInterface),
@@ -108,6 +111,7 @@ void GLWidget::initializeGL()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
+    //glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 
     // Initialize shader programs.
     for (auto program = m_programs.begin(); program != m_programs.end(); ++program)
@@ -241,7 +245,7 @@ void GLWidget::paintGL()
     if (useTransparency)
     {
         glViewport(0, 0, m_depthPeel0Framebuffer->colorTexture->width(), m_depthPeel0Framebuffer->colorTexture->height());
-        glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
+        glClearColor(1.0f, 1.0f, 1.0f, 0.0f);    //draw background
 
         // Draw first (front-most) depth peeling layer.
         m_depthPeel0Framebuffer->bind();
@@ -294,7 +298,7 @@ void GLWidget::paintGL()
         }
 
         // Render scene.
-        glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
+        glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 #if FEEDBACK
         _drawHairFromFeedback(m_TFhairProgram, model, m_view, m_projection);
@@ -492,13 +496,15 @@ void GLWidget::initCamera(){
     //
     // Adjust position for USC dataset
     //
-    m_angleX = 0;
-    m_angleY = 0;
+    m_angleX = X_angle;
+    m_angleY = Y_angle;
+    float m_angleZ = Z_angle;
     m_zoom = 0.75;
 
     // Initialize global view and projection matrices.
     m_view = glm::translate(glm::vec3(0, 0, -m_zoom)) *
             glm::rotate(m_angleY, glm::vec3(1, 0, 0)) *
+            glm::rotate(m_angleZ, glm::vec3(0 , 0, 1)) *
             glm::translate(glm::mat4(1.0f), glm::vec3(0, -1.7, 0)) *
             glm::rotate(m_angleX, glm::vec3(0, 1, 0));
 
