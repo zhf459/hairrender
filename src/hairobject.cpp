@@ -124,6 +124,7 @@ bool read_cvhair(const char *filename, std::vector<Strand>& strands, std::vector
                     //colors[hairIndex].push_back(glm::vec3(colorvalue[3*j],colorvalue[3*j+1],colorvalue[3*j+2]));
                 }
                 perStrandColor[hairIndex] /= (segments[hairIndex]+1);
+                perStrandColor[hairIndex] /= 255.0f;
                 pointIndex += segments[hairIndex]+1;
                 count+=1;
             }

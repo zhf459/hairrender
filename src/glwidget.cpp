@@ -31,6 +31,7 @@
 #define FEEDBACK false
 
 extern std::string hairstyle_file;
+extern std::string headmodel_file;
 extern float X_angle;
 extern float Y_angle;
 extern float Z_angle;
@@ -455,7 +456,8 @@ void GLWidget::initSimulation()
 
     m_highResMesh = new ObjMesh();
     //m_highResMesh->init(":/models/head.obj");
-    m_highResMesh->init("/mnt/localdata/hairstyles/head_model_textured.obj");  // load model in USC dataset
+    m_highResMesh->init(headmodel_file.c_str()); //load head model
+    cout<<"load obj done."<<endl;
     m_hairInterface->setMesh(m_highResMesh);
 
     m_lowResMesh = new ObjMesh();
