@@ -71,7 +71,9 @@ SOURCES       = src/ui/mainwindow.cpp \
 		src/shaderPrograms/hairfeedbackshaderprogram.cpp \
 		src/ui/sceneeditor.cpp \
 		src/ui/scenewidget.cpp \
-		src/lib/blurrer.cpp release/qrc_shaders.cpp \
+		src/lib/blurrer.cpp \
+		src/lib/ply_io.cpp \
+		src/lib/PlyModel.cpp release/qrc_shaders.cpp \
 		release/qrc_models.cpp \
 		release/qrc_images.cpp \
 		release/moc_mainwindow.cpp \
@@ -107,6 +109,8 @@ OBJECTS       = release/mainwindow.o \
 		release/sceneeditor.o \
 		release/scenewidget.o \
 		release/blurrer.o \
+		release/ply_io.o \
+		release/PlyModel.o \
 		release/qrc_shaders.o \
 		release/qrc_models.o \
 		release/qrc_images.o \
@@ -219,7 +223,7 @@ qmake_all: FORCE
 
 dist: 
 	@test -d release/hair1.0.0 || mkdir -p release/hair1.0.0
-	$(COPY_FILE) --parents $(SOURCES) $(DIST) release/hair1.0.0/ && $(COPY_FILE) --parents shaders/shaders.qrc models/models.qrc images/images.qrc release/hair1.0.0/ && $(COPY_FILE) --parents src/ui/mainwindow.h src/glwidget.h src/lib/resourceloader.h src/lib/openglshape.h src/lib/errorchecker.h src/hairobject.h src/hairCommon.h src/mike/hair.h src/mike/simulation.h src/shaderPrograms/shaderprogram.h src/mike/integrator.h src/lib/objloader.hpp src/objmesh.h src/shaderPrograms/hairshaderprogram.h src/shaderPrograms/meshshaderprogram.h src/ui/hairinterface.h src/shaderPrograms/texturedquadshaderprogram.h src/texture.h src/framebuffer.h src/quad.h src/shaderPrograms/hairopacityshaderprogram.h src/meshocttree.h src/shaderPrograms/whitemeshshaderprogram.h src/shaderPrograms/whitehairshaderprogram.h src/md5.h src/tessellator.h src/shaderPrograms/hairfeedbackshaderprogram.h src/shaderPrograms/hairrendershaderprogram.h src/ui/sceneeditor.h src/ui/scenewidget.h src/lib/blurrer.h src/shaderPrograms/hairdepthpeelprogram.h src/shaderPrograms/meshdepthpeelprogram.h release/hair1.0.0/ && $(COPY_FILE) --parents src/ui/mainwindow.cpp src/main.cpp src/glwidget.cpp src/lib/resourceloader.cpp src/lib/openglshape.cpp src/lib/errorchecker.cpp src/hairobject.cpp src/mike/hair.cpp src/mike/simulation.cpp src/shaderPrograms/shaderprogram.cpp src/mike/integrator.cpp src/lib/objloader.cpp src/objmesh.cpp src/shaderPrograms/hairshaderprogram.cpp src/shaderPrograms/meshshaderprogram.cpp src/ui/hairinterface.cpp src/shaderPrograms/texturedquadshaderprogram.cpp src/texture.cpp src/framebuffer.cpp src/quad.cpp src/shaderPrograms/hairopacityshaderprogram.cpp src/meshocttree.cpp src/md5.cpp src/tessellator.cpp src/shaderPrograms/hairfeedbackshaderprogram.cpp src/ui/sceneeditor.cpp src/ui/scenewidget.cpp src/lib/blurrer.cpp release/hair1.0.0/ && $(COPY_FILE) --parents src/mainwindow.ui src/ui/sceneeditor.ui release/hair1.0.0/ && (cd `dirname release/hair1.0.0` && $(TAR) hair1.0.0.tar hair1.0.0 && $(COMPRESS) hair1.0.0.tar) && $(MOVE) `dirname release/hair1.0.0`/hair1.0.0.tar.gz . && $(DEL_FILE) -r release/hair1.0.0
+	$(COPY_FILE) --parents $(SOURCES) $(DIST) release/hair1.0.0/ && $(COPY_FILE) --parents shaders/shaders.qrc models/models.qrc images/images.qrc release/hair1.0.0/ && $(COPY_FILE) --parents src/ui/mainwindow.h src/glwidget.h src/lib/resourceloader.h src/lib/openglshape.h src/lib/errorchecker.h src/hairobject.h src/hairCommon.h src/mike/hair.h src/mike/simulation.h src/shaderPrograms/shaderprogram.h src/mike/integrator.h src/lib/objloader.hpp src/objmesh.h src/shaderPrograms/hairshaderprogram.h src/shaderPrograms/meshshaderprogram.h src/ui/hairinterface.h src/shaderPrograms/texturedquadshaderprogram.h src/texture.h src/framebuffer.h src/quad.h src/shaderPrograms/hairopacityshaderprogram.h src/meshocttree.h src/shaderPrograms/whitemeshshaderprogram.h src/shaderPrograms/whitehairshaderprogram.h src/md5.h src/tessellator.h src/shaderPrograms/hairfeedbackshaderprogram.h src/shaderPrograms/hairrendershaderprogram.h src/ui/sceneeditor.h src/ui/scenewidget.h src/lib/blurrer.h src/shaderPrograms/hairdepthpeelprogram.h src/shaderPrograms/meshdepthpeelprogram.h src/lib/ply_io.h src/lib/PlyModel.h release/hair1.0.0/ && $(COPY_FILE) --parents src/ui/mainwindow.cpp src/main.cpp src/glwidget.cpp src/lib/resourceloader.cpp src/lib/openglshape.cpp src/lib/errorchecker.cpp src/hairobject.cpp src/mike/hair.cpp src/mike/simulation.cpp src/shaderPrograms/shaderprogram.cpp src/mike/integrator.cpp src/lib/objloader.cpp src/objmesh.cpp src/shaderPrograms/hairshaderprogram.cpp src/shaderPrograms/meshshaderprogram.cpp src/ui/hairinterface.cpp src/shaderPrograms/texturedquadshaderprogram.cpp src/texture.cpp src/framebuffer.cpp src/quad.cpp src/shaderPrograms/hairopacityshaderprogram.cpp src/meshocttree.cpp src/md5.cpp src/tessellator.cpp src/shaderPrograms/hairfeedbackshaderprogram.cpp src/ui/sceneeditor.cpp src/ui/scenewidget.cpp src/lib/blurrer.cpp src/lib/ply_io.cpp src/lib/PlyModel.cpp release/hair1.0.0/ && $(COPY_FILE) --parents src/mainwindow.ui src/ui/sceneeditor.ui release/hair1.0.0/ && (cd `dirname release/hair1.0.0` && $(TAR) hair1.0.0.tar hair1.0.0 && $(COMPRESS) hair1.0.0.tar) && $(MOVE) `dirname release/hair1.0.0`/hair1.0.0.tar.gz . && $(DEL_FILE) -r release/hair1.0.0
 
 
 clean:compiler_clean 
@@ -244,51 +248,51 @@ compiler_rcc_make_all: release/qrc_shaders.cpp release/qrc_models.cpp release/qr
 compiler_rcc_clean:
 	-$(DEL_FILE) release/qrc_shaders.cpp release/qrc_models.cpp release/qrc_images.cpp
 release/qrc_shaders.cpp: shaders/shaders.qrc \
-		shaders/hair.tcs \
-		shaders/texturedquad.frag \
-		shaders/hair.frag \
-		shaders/meshdepthpeel.frag \
-		shaders/hairrender.vert \
-		shaders/hairrender.vert \
-		shaders/mesh.frag \
-		shaders/meshlighting.glsl \
 		shaders/depthpeel.glsl \
-		shaders/hairOpacity.frag \
-		shaders/hairFeedback.tes \
+		shaders/hair.tes \
+		shaders/hairrender.vert \
+		shaders/hairrender.vert \
+		shaders/meshdepthpeel.frag \
+		shaders/mesh.frag \
+		shaders/opacitymapping.glsl \
+		shaders/hair.frag \
 		shaders/hairFeedback.geom \
-		shaders/hair.geom \
 		shaders/hairlighting.glsl \
 		shaders/texturedquad.vert \
+		shaders/hairFeedback.tes \
 		shaders/constants.glsl \
+		shaders/hairOpacity.frag \
+		shaders/hair.tcs \
+		shaders/hair.geom \
+		shaders/mesh.vert \
 		shaders/hair.vert \
-		shaders/hair.tes \
-		shaders/white.frag \
-		shaders/opacitymapping.glsl \
+		shaders/texturedquad.frag \
 		shaders/hairDepthPeel.frag \
-		shaders/mesh.vert
+		shaders/white.frag \
+		shaders/meshlighting.glsl
 	/usr/lib/x86_64-linux-gnu/qt5/bin/rcc -name shaders shaders/shaders.qrc -o release/qrc_shaders.cpp
 
 release/qrc_models.cpp: models/models.qrc \
 		models/cube.obj \
+		models/dude_highres.obj \
+		models/head.obj \
 		models/sphere.obj \
 		models/headLowRes.obj \
-		models/dude_highres.obj \
-		models/dude_lowres.obj \
-		models/head.obj
+		models/dude_lowres.obj
 	/usr/lib/x86_64-linux-gnu/qt5/bin/rcc -name models models/models.qrc -o release/qrc_models.cpp
 
 release/qrc_images.cpp: images/images.qrc \
 		images/noise128.jpg \
-		images/dude_hairmap.png \
-		images/chevron_down.png \
 		images/white.jpg \
-		images/headHair.jpg \
-		images/dude_hairmap_inv.jpg \
+		images/headHairSideburns.jpg \
+		images/dude_hairmap.png \
 		images/lower.png \
-		images/dude_hairmap.jpg \
 		images/chevron_up.png \
+		images/dude_hairmap_inv.jpg \
 		images/upper.png \
-		images/headHairSideburns.jpg
+		images/headHair.jpg \
+		images/chevron_down.png \
+		images/dude_hairmap.jpg
 	/usr/lib/x86_64-linux-gnu/qt5/bin/rcc -name images images/images.qrc -o release/qrc_images.cpp
 
 compiler_moc_header_make_all: release/moc_mainwindow.cpp release/moc_glwidget.cpp release/moc_hairinterface.cpp release/moc_sceneeditor.cpp release/moc_scenewidget.cpp
@@ -3935,6 +3939,8 @@ release/objmesh.o: src/objmesh.cpp src/objmesh.h \
 		/usr/include/qt5/QtCore/qtimezone.h \
 		/usr/include/qt5/QtCore/qxmlstream.h \
 		/usr/include/qt5/QtCore/qtcoreversion.h \
+		src/lib/PlyModel.h \
+		src/lib/ply_io.h \
 		src/lib/errorchecker.h \
 		src/lib/objloader.hpp \
 		glm/gtx/random.hpp \
@@ -7120,6 +7126,218 @@ release/blurrer.o: src/lib/blurrer.cpp src/lib/blurrer.h \
 		/usr/include/qt5/QtGui/qfontmetrics.h \
 		/usr/include/qt5/QtGui/QPixmap
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release/blurrer.o src/lib/blurrer.cpp
+
+release/ply_io.o: src/lib/ply_io.cpp src/lib/ply_io.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release/ply_io.o src/lib/ply_io.cpp
+
+release/PlyModel.o: src/lib/PlyModel.cpp src/lib/PlyModel.h \
+		src/lib/ply_io.h \
+		src/hairCommon.h \
+		glew-1.10.0/include/GL/glew.h \
+		glm/glm.hpp \
+		glm/detail/_fixes.hpp \
+		glm/fwd.hpp \
+		glm/detail/type_int.hpp \
+		glm/detail/setup.hpp \
+		glm/detail/type_float.hpp \
+		glm/detail/type_vec.hpp \
+		glm/detail/precision.hpp \
+		glm/detail/type_mat.hpp \
+		glm/vec2.hpp \
+		glm/detail/type_vec2.hpp \
+		glm/detail/_swizzle.hpp \
+		glm/detail/_swizzle_func.hpp \
+		glm/detail/type_vec2.inl \
+		glm/vec3.hpp \
+		glm/detail/type_vec3.hpp \
+		glm/detail/type_vec3.inl \
+		glm/vec4.hpp \
+		glm/detail/type_vec4.hpp \
+		glm/detail/type_vec4.inl \
+		glm/mat2x2.hpp \
+		glm/detail/type_mat2x2.hpp \
+		glm/detail/type_mat2x2.inl \
+		glm/mat2x3.hpp \
+		glm/detail/type_mat2x3.hpp \
+		glm/detail/type_mat2x3.inl \
+		glm/mat2x4.hpp \
+		glm/detail/type_mat2x4.hpp \
+		glm/detail/type_mat2x4.inl \
+		glm/mat3x2.hpp \
+		glm/detail/type_mat3x2.hpp \
+		glm/detail/type_mat3x2.inl \
+		glm/mat3x3.hpp \
+		glm/detail/type_mat3x3.hpp \
+		glm/detail/type_mat3x3.inl \
+		glm/mat3x4.hpp \
+		glm/detail/type_mat3x4.hpp \
+		glm/detail/type_mat3x4.inl \
+		glm/mat4x2.hpp \
+		glm/detail/type_mat4x2.hpp \
+		glm/detail/type_mat4x2.inl \
+		glm/mat4x3.hpp \
+		glm/detail/type_mat4x3.hpp \
+		glm/detail/type_mat4x3.inl \
+		glm/mat4x4.hpp \
+		glm/detail/type_mat4x4.hpp \
+		glm/detail/type_mat4x4.inl \
+		glm/trigonometric.hpp \
+		glm/detail/func_trigonometric.hpp \
+		glm/detail/func_trigonometric.inl \
+		glm/detail/_vectorize.hpp \
+		glm/detail/type_vec1.hpp \
+		glm/detail/type_vec1.inl \
+		glm/exponential.hpp \
+		glm/detail/func_exponential.hpp \
+		glm/detail/func_exponential.inl \
+		glm/detail/func_vector_relational.hpp \
+		glm/detail/func_vector_relational.inl \
+		glm/common.hpp \
+		glm/detail/func_common.hpp \
+		glm/detail/func_common.inl \
+		glm/packing.hpp \
+		glm/detail/func_packing.hpp \
+		glm/detail/func_packing.inl \
+		glm/detail/type_half.hpp \
+		glm/detail/type_half.inl \
+		glm/geometric.hpp \
+		glm/detail/func_geometric.hpp \
+		glm/detail/func_geometric.inl \
+		glm/matrix.hpp \
+		glm/detail/func_matrix.hpp \
+		glm/detail/func_matrix.inl \
+		glm/vector_relational.hpp \
+		glm/integer.hpp \
+		glm/detail/func_integer.hpp \
+		glm/detail/func_integer.inl \
+		glm/gtx/string_cast.hpp \
+		glm/gtx/integer.hpp \
+		glm/gtx/integer.inl \
+		glm/gtx/quaternion.hpp \
+		glm/gtc/constants.hpp \
+		glm/gtc/constants.inl \
+		glm/gtc/quaternion.hpp \
+		glm/gtx/quaternion.inl \
+		glm/gtx/norm.hpp \
+		glm/gtx/norm.inl \
+		glm/gtx/string_cast.inl \
+		glm/gtx/transform.hpp \
+		glm/gtc/matrix_transform.hpp \
+		glm/gtc/matrix_transform.inl \
+		glm/gtx/transform.inl \
+		glm/gtc/type_ptr.hpp \
+		glm/gtc/type_ptr.inl \
+		/usr/include/qt5/QtWidgets/QMessageBox \
+		/usr/include/qt5/QtWidgets/qmessagebox.h \
+		/usr/include/qt5/QtWidgets/qdialog.h \
+		/usr/include/qt5/QtWidgets/qwidget.h \
+		/usr/include/qt5/QtGui/qwindowdefs.h \
+		/usr/include/qt5/QtCore/qglobal.h \
+		/usr/include/qt5/QtCore/qconfig.h \
+		/usr/include/qt5/QtCore/qfeatures.h \
+		/usr/include/qt5/QtCore/qsystemdetection.h \
+		/usr/include/qt5/QtCore/qprocessordetection.h \
+		/usr/include/qt5/QtCore/qcompilerdetection.h \
+		/usr/include/qt5/QtCore/qglobalstatic.h \
+		/usr/include/qt5/QtCore/qatomic.h \
+		/usr/include/qt5/QtCore/qbasicatomic.h \
+		/usr/include/qt5/QtCore/qatomic_bootstrap.h \
+		/usr/include/qt5/QtCore/qgenericatomic.h \
+		/usr/include/qt5/QtCore/qatomic_msvc.h \
+		/usr/include/qt5/QtCore/qatomic_integrity.h \
+		/usr/include/qt5/QtCore/qoldbasicatomic.h \
+		/usr/include/qt5/QtCore/qatomic_vxworks.h \
+		/usr/include/qt5/QtCore/qatomic_power.h \
+		/usr/include/qt5/QtCore/qatomic_alpha.h \
+		/usr/include/qt5/QtCore/qatomic_armv7.h \
+		/usr/include/qt5/QtCore/qatomic_armv6.h \
+		/usr/include/qt5/QtCore/qatomic_armv5.h \
+		/usr/include/qt5/QtCore/qatomic_bfin.h \
+		/usr/include/qt5/QtCore/qatomic_ia64.h \
+		/usr/include/qt5/QtCore/qatomic_mips.h \
+		/usr/include/qt5/QtCore/qatomic_s390.h \
+		/usr/include/qt5/QtCore/qatomic_sh4a.h \
+		/usr/include/qt5/QtCore/qatomic_sparc.h \
+		/usr/include/qt5/QtCore/qatomic_gcc.h \
+		/usr/include/qt5/QtCore/qatomic_x86.h \
+		/usr/include/qt5/QtCore/qatomic_cxx11.h \
+		/usr/include/qt5/QtCore/qatomic_unix.h \
+		/usr/include/qt5/QtCore/qmutex.h \
+		/usr/include/qt5/QtCore/qlogging.h \
+		/usr/include/qt5/QtCore/qflags.h \
+		/usr/include/qt5/QtCore/qtypeinfo.h \
+		/usr/include/qt5/QtCore/qtypetraits.h \
+		/usr/include/qt5/QtCore/qsysinfo.h \
+		/usr/include/qt5/QtCore/qobjectdefs.h \
+		/usr/include/qt5/QtCore/qnamespace.h \
+		/usr/include/qt5/QtCore/qobjectdefs_impl.h \
+		/usr/include/qt5/QtGui/qwindowdefs_win.h \
+		/usr/include/qt5/QtCore/qobject.h \
+		/usr/include/qt5/QtCore/qstring.h \
+		/usr/include/qt5/QtCore/qchar.h \
+		/usr/include/qt5/QtCore/qbytearray.h \
+		/usr/include/qt5/QtCore/qrefcount.h \
+		/usr/include/qt5/QtCore/qarraydata.h \
+		/usr/include/qt5/QtCore/qstringbuilder.h \
+		/usr/include/qt5/QtCore/qlist.h \
+		/usr/include/qt5/QtCore/qalgorithms.h \
+		/usr/include/qt5/QtCore/qiterator.h \
+		/usr/include/qt5/QtCore/qcoreevent.h \
+		/usr/include/qt5/QtCore/qscopedpointer.h \
+		/usr/include/qt5/QtCore/qmetatype.h \
+		/usr/include/qt5/QtCore/qvarlengtharray.h \
+		/usr/include/qt5/QtCore/qcontainerfwd.h \
+		/usr/include/qt5/QtCore/qisenum.h \
+		/usr/include/qt5/QtCore/qobject_impl.h \
+		/usr/include/qt5/QtCore/qmargins.h \
+		/usr/include/qt5/QtCore/qrect.h \
+		/usr/include/qt5/QtCore/qsize.h \
+		/usr/include/qt5/QtCore/qpoint.h \
+		/usr/include/qt5/QtGui/qpaintdevice.h \
+		/usr/include/qt5/QtGui/qpalette.h \
+		/usr/include/qt5/QtGui/qcolor.h \
+		/usr/include/qt5/QtGui/qrgb.h \
+		/usr/include/qt5/QtCore/qstringlist.h \
+		/usr/include/qt5/QtCore/qdatastream.h \
+		/usr/include/qt5/QtCore/qiodevice.h \
+		/usr/include/qt5/QtCore/qpair.h \
+		/usr/include/qt5/QtCore/qregexp.h \
+		/usr/include/qt5/QtCore/qstringmatcher.h \
+		/usr/include/qt5/QtGui/qbrush.h \
+		/usr/include/qt5/QtCore/qvector.h \
+		/usr/include/qt5/QtGui/qmatrix.h \
+		/usr/include/qt5/QtGui/qpolygon.h \
+		/usr/include/qt5/QtGui/qregion.h \
+		/usr/include/qt5/QtCore/qline.h \
+		/usr/include/qt5/QtGui/qtransform.h \
+		/usr/include/qt5/QtGui/qpainterpath.h \
+		/usr/include/qt5/QtGui/qimage.h \
+		/usr/include/qt5/QtGui/qpixmap.h \
+		/usr/include/qt5/QtCore/qsharedpointer.h \
+		/usr/include/qt5/QtCore/qshareddata.h \
+		/usr/include/qt5/QtCore/qsharedpointer_impl.h \
+		/usr/include/qt5/QtCore/qhash.h \
+		/usr/include/qt5/QtGui/qfont.h \
+		/usr/include/qt5/QtGui/qfontmetrics.h \
+		/usr/include/qt5/QtGui/qfontinfo.h \
+		/usr/include/qt5/QtWidgets/qsizepolicy.h \
+		/usr/include/qt5/QtGui/qcursor.h \
+		/usr/include/qt5/QtGui/qkeysequence.h \
+		/usr/include/qt5/QtGui/qevent.h \
+		/usr/include/qt5/QtCore/qvariant.h \
+		/usr/include/qt5/QtCore/qmap.h \
+		/usr/include/qt5/QtCore/qdebug.h \
+		/usr/include/qt5/QtCore/qtextstream.h \
+		/usr/include/qt5/QtCore/qlocale.h \
+		/usr/include/qt5/QtCore/qset.h \
+		/usr/include/qt5/QtCore/qcontiguouscache.h \
+		/usr/include/qt5/QtCore/qurl.h \
+		/usr/include/qt5/QtCore/qurlquery.h \
+		/usr/include/qt5/QtCore/qfile.h \
+		/usr/include/qt5/QtCore/qfiledevice.h \
+		/usr/include/qt5/QtGui/qvector2d.h \
+		/usr/include/qt5/QtGui/qtouchdevice.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release/PlyModel.o src/lib/PlyModel.cpp
 
 release/qrc_shaders.o: release/qrc_shaders.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release/qrc_shaders.o release/qrc_shaders.cpp

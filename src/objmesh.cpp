@@ -1,4 +1,5 @@
 #include "objmesh.h"
+#include "PlyModel.h"
 #include "errorchecker.h"
 #include "objloader.hpp"
 #include <glm/glm.hpp>
@@ -15,47 +16,112 @@ ObjMesh::ObjMesh()
 
 void ObjMesh::init(const char *objFile, float scale)
 {
-    std::vector<glm::vec3> vertices;
-    std::vector<glm::vec2> uvs;
-    std::vector<glm::vec3> normals;
-    bool loaded = OBJLoader::loadOBJ(objFile, vertices, uvs, normals);
+    if(strstr(objFile,".obj") || strstr(objFile,".OBJ")){
+        std::vector<glm::vec3> vertices;
+        std::vector<glm::vec2> uvs;
+        std::vector<glm::vec3> normals;
+        bool loaded = OBJLoader::loadOBJ(objFile, vertices, uvs, normals);
 
-    if (!loaded) {
-        printf("Failed to load OBJ: %s\n", objFile);
-        exit(1);
+        cout<<vertices[0][0]<<","<<vertices[0][1]<<","<<vertices[0][2]<<endl;
+        cout<<vertices[1][0]<<","<<vertices[1][1]<<","<<vertices[1][2]<<endl;
+        cout<<vertices[2][0]<<","<<vertices[2][1]<<","<<vertices[2][2]<<endl;
+
+        if (!loaded) {
+            printf("Failed to load OBJ: %s\n", objFile);
+            exit(1);
+        }
+
+        cout<<vertices.size()<<endl;
+        // Initialize m_triangles
+        for (unsigned int i=0; i < vertices.size()/3; i++) {
+            unsigned int i1 = i*3, i2 = i1+1, i3=i2+1;
+            Triangle t(vertices[i1] * scale, vertices[i2] * scale, vertices[i3] * scale,
+                       uvs[i1], uvs[i2], uvs[i3],
+                       normals[i1], normals[i2], normals[i3]);
+            triangles.push_back(t);
+        }
+
+        // Initialize vbo
+        std::vector<GLfloat> vboData;
+        for (unsigned int i=0; i < vertices.size(); i++) {
+            vboData.push_back(vertices[i].x);
+            vboData.push_back(vertices[i].y);
+            vboData.push_back(vertices[i].z);
+            vboData.push_back(uvs[i].x);
+            vboData.push_back(1 - uvs[i].y);
+            vboData.push_back(normals[i].x);
+            vboData.push_back(normals[i].y);
+            vboData.push_back(normals[i].z);
+
+            // Set object boundaries.
+            m_min = glm::min(m_min, scale * vertices[i]);
+            m_max = glm::max(m_max, scale * vertices[i]);
+        }
+
+        m_shape.create();
+        m_shape.setVertexData(&vboData[0], sizeof(GLfloat) * vboData.size(), vertices.size());
+        m_shape.setAttribute(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 8, 0);
+        m_shape.setAttribute(1, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 8, 3 * sizeof(GLfloat));
+        m_shape.setAttribute(2, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 8, 5 * sizeof(GLfloat));
+
     }
+    else
+        if(strstr(objFile,".ply") || strstr(objFile,".PLY")){
+            bool normal = true,color = true;
+            PlyModel plymodel;
+            bool loaded = plymodel.loadPly(objFile,normal,color);
+            plymodel.createBuffer();
+          //  cout<<plymodel.xyz_buffer[0][0]<<","<<plymodel.xyz_buffer[0][1]<<","<<plymodel.xyz_buffer[0][2]<<endl;
+          //  cout<<plymodel.xyz_buffer[1][0]<<","<<plymodel.xyz_buffer[1][1]<<","<<plymodel.xyz_buffer[1][2]<<endl;
+          //  cout<<plymodel.xyz_buffer[2][0]<<","<<plymodel.xyz_buffer[2][1]<<","<<plymodel.xyz_buffer[2][2]<<endl;
 
-    // Initialize m_triangles
-    for (unsigned int i=0; i < vertices.size()/3; i++) {
-        unsigned int i1 = i*3, i2 = i1+1, i3=i2+1;
-        Triangle t(vertices[i1] * scale, vertices[i2] * scale, vertices[i3] * scale,
-                   uvs[i1], uvs[i2], uvs[i3],
-                   normals[i1], normals[i2], normals[i3]);
-        triangles.push_back(t);
-    }
+            if (!loaded) {
+                printf("Failed to load PLY: %s\n", objFile);
+                exit(1);
+            }
 
-    // Initialize vbo
-    std::vector<GLfloat> vboData;
-    for (unsigned int i=0; i < vertices.size(); i++) {
-        vboData.push_back(vertices[i].x);
-        vboData.push_back(vertices[i].y);
-        vboData.push_back(vertices[i].z);
-        vboData.push_back(uvs[i].x);
-        vboData.push_back(1 - uvs[i].y);
-        vboData.push_back(normals[i].x);
-        vboData.push_back(normals[i].y);
-        vboData.push_back(normals[i].z);
+            cout<<"Load Ply done."<<endl;
+            // Initialize m_triangles
+            for (unsigned int i=0; i < plymodel.xyz_buffer.size()/3; i++) {
+                unsigned int i1 = i*3, i2 = i1+1, i3=i2+1;
+               Triangle t(plymodel.xyz_buffer[i1] * scale, plymodel.xyz_buffer[i2] * scale, plymodel.xyz_buffer[i3] * scale,
+                          glm::vec2(0.0f),glm::vec2(0.0f),glm::vec2(0.0f),
+                           plymodel.normal_buffer[i1], plymodel.normal_buffer[i2], plymodel.normal_buffer[i3],
+                          plymodel.color_buffer[i1],plymodel.color_buffer[i2],plymodel.color_buffer[i3]);
+               triangles.push_back(t);
+            }
 
-        // Set object boundaries.
-        m_min = glm::min(m_min, scale * vertices[i]);
-        m_max = glm::max(m_max, scale * vertices[i]);
-    }
+            // Initialize vbo
+            std::vector<GLfloat> vboData;
+            for (unsigned int i=0; i < plymodel.xyz_buffer.size(); i++) {
+                vboData.push_back(plymodel.xyz_buffer[i][0]);
+                vboData.push_back(plymodel.xyz_buffer[i][1]);
+                vboData.push_back(plymodel.xyz_buffer[i][2]);
+                vboData.push_back(0.0);
+                vboData.push_back(0.0);
+                vboData.push_back(plymodel.normal_buffer[i][0]);
+                vboData.push_back(plymodel.normal_buffer[i][1]);
+                vboData.push_back(plymodel.normal_buffer[i][2]);
+                vboData.push_back(plymodel.color_buffer[i][0]);
+                vboData.push_back(plymodel.color_buffer[i][1]);
+                vboData.push_back(plymodel.color_buffer[i][2]);
 
-    m_shape.create();
-    m_shape.setVertexData(&vboData[0], sizeof(GLfloat) * vboData.size(), vertices.size());
-    m_shape.setAttribute(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 8, 0);
-    m_shape.setAttribute(1, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 8, 3 * sizeof(GLfloat));
-    m_shape.setAttribute(2, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 8, 5 * sizeof(GLfloat));
+                // Set object boundaries.
+                m_min = glm::min(m_min, scale * plymodel.xyz_buffer[i]);
+                m_max = glm::max(m_max, scale * plymodel.xyz_buffer[i]);
+            }
+
+            m_shape.create();
+            m_shape.setVertexData(&vboData[0], sizeof(GLfloat) * vboData.size(), plymodel.xyz_buffer.size());
+            m_shape.setAttribute(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 11, 0);
+            m_shape.setAttribute(1, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 11, 3 * sizeof(GLfloat));
+            m_shape.setAttribute(2, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 11, 5 * sizeof(GLfloat));
+            m_shape.setAttribute(3, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 11, 8 * sizeof(GLfloat));
+        }
+        else{
+            cerr<<"unknown mesh type."<<endl;
+        }
+
 }
 
 void ObjMesh::draw()

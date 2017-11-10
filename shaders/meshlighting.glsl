@@ -16,9 +16,9 @@ vec3 colorContribution(in vec4 position_WS, in vec4 normal_WS, in vec4 lightPosi
     return diffuse * MESH_DIFFUSE_INTENSITY * meshColor;
 }
 
-vec4 meshLighting(in vec4 position_WS, in vec4 normal_WS, in vec2 uv) {
+vec4 meshLighting(in vec4 position_WS, in vec4 normal_WS, in vec3 color_v) {
     //meshColor = mix(MESH_COLOR, MIN_COLOR*hairColor, texture(hairGrowthMap, uv).r); // Temporarily set color to white
-    meshColor = vec3(1.0f);                                                           //
+    meshColor = color_v;                                                           //
 
     vec4 position_lightSpace = eyeToLight * view * position_WS;
 

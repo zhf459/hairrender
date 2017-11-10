@@ -60,7 +60,9 @@ SOURCES += \
     src/shaderPrograms/hairfeedbackshaderprogram.cpp \
     src/ui/sceneeditor.cpp \
     src/ui/scenewidget.cpp \
-    src/lib/blurrer.cpp
+    src/lib/blurrer.cpp \
+    src/lib/ply_io.cpp \
+    src/lib/PlyModel.cpp
 
 HEADERS += \
     src/ui/mainwindow.h \
@@ -95,7 +97,9 @@ HEADERS += \
     src/ui/scenewidget.h \
     src/lib/blurrer.h \
     src/shaderPrograms/hairdepthpeelprogram.h \
-    src/shaderPrograms/meshdepthpeelprogram.h
+    src/shaderPrograms/meshdepthpeelprogram.h \
+    src/lib/ply_io.h \
+    src/lib/PlyModel.h
 
 FORMS += src/mainwindow.ui \
     src/ui/sceneeditor.ui

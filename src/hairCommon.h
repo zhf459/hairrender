@@ -61,10 +61,26 @@ struct Triangle {
     Triangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3,
              glm::vec2 uv1, glm::vec2 uv2, glm::vec2 uv3,
              glm::vec3 n1, glm::vec3 n2, glm::vec3 n3) :
-        v1(v1), v2(v2), v3(v3), uv1(uv1), uv2(uv2), uv3(uv3), n1(n1), n2(n2), n3(n3) {}
+        v1(v1), v2(v2), v3(v3), uv1(uv1), uv2(uv2), uv3(uv3), n1(n1), n2(n2), n3(n3) {
+        rgb1 = glm::vec3(1.0f);
+        rgb2 = glm::vec3(1.0f);
+        rgb3 = glm::vec3(1.0f);
+    }
+
+    Triangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3,
+             glm::vec2 uv1, glm::vec2 uv2, glm::vec2 uv3,
+             glm::vec3 n1, glm::vec3 n2, glm::vec3 n3,
+             glm::vec3 rgb1, glm::vec3 rgb2, glm::vec3 rgb3) :
+        v1(v1), v2(v2), v3(v3), uv1(uv1), uv2(uv2), uv3(uv3),n1(n1), n2(n2), n3(n3), rgb1(rgb1), rgb2(rgb2), rgb3(rgb3) {
+        //uv1 = glm::vec2(0.0f);
+        //uv2 = glm::vec2(0.0f);
+        //uv3 = glm::vec2(0.0f);
+    }
+
     glm::vec3 v1, v2, v3;
     glm::vec2 uv1, uv2, uv3;
     glm::vec3 n1, n2, n3;
+    glm::vec3 rgb1, rgb2, rgb3;
 
     float area() { return glm::length(glm::cross(v3 - v1, v2 - v1)) / 2.f; }
 
