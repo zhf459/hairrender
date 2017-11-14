@@ -35,6 +35,7 @@ extern std::string headmodel_file;
 extern float X_angle;
 extern float Y_angle;
 extern float Z_angle;
+extern std::string save_image;
 GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *parent)
     : QGLWidget(format, parent),
       m_hairInterface(hairInterface),
@@ -328,6 +329,18 @@ void GLWidget::paintGL()
     m_depthPeel0Framebuffer->depthTexture->bind(GL_TEXTURE6);
     m_depthPeel0Framebuffer->colorTexture->bind(GL_TEXTURE7);
     m_depthPeel1Framebuffer->colorTexture->bind(GL_TEXTURE8);
+
+    if(save_image.size()>0){
+        int screenStats[4];
+        glGetIntegerv(GL_VIEWPORT,screenStats);
+        //cout<<"screenStats"<<screenStats[0]<<","<<screenStats[1]<<","<<screenStats[2]<<","<<screenStats[3]<<endl;
+        uchar * imageData = new unsigned char[(screenStats[2])*(screenStats[3])*3];
+        glReadPixels(0,0,screenStats[2]-1, screenStats[3]-1,GL_RGB,GL_UNSIGNED_BYTE,imageData);
+        QImage saveImage(imageData,screenStats[2]-1,screenStats[3]-1,QImage::Format_RGB888);
+        QImage flipped = saveImage.mirrored(false,true);
+        flipped.save(save_image.c_str());
+        exit(1);
+    }
 
     // Update UI.
     m_hairInterface->updateFPSLabel(m_increment);
