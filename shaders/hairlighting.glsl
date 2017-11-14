@@ -26,7 +26,8 @@ vec3 colorContribution(
     float specular = pow(sqrt(1. - abs(dot(tangent_N, h_N))), HAIR_SHININESS);
 
     // Add color variation
-    vec3 colorMultiplier = vec3(1.0 + maxColorVariation * (2.0 * colorVariation - 1.0));
+   // vec3 colorMultiplier = vec3(1.0 + maxColorVariation * (2.0 * colorVariation - 1.0));
+    vec3 colorMultiplier = vec3(1.0);
 
     // Add color gradient
     colorMultiplier *= mix(MIN_COLOR, 1.0, smoothstep(MIN_COLOR_END, MAX_COLOR_START, tessx_g));
