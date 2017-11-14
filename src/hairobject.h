@@ -42,7 +42,7 @@ public:
             float _noiseFrequency = 0.01f,
             int _numSplineVertices = 20,
             float _shadowIntensity = 20,
-            float _diffuseIntensity = 1,
+            float _diffuseIntensity = 1.0,
             float _specularIntensity = .5,
             float _transparency = .25,
             float _useHairColorVariation = true,

@@ -9,6 +9,9 @@
 #include <glm/gtx/color_space.hpp>
 #include <cyHairFile.h>
 
+extern float X_angle;
+extern float Y_angle;
+extern float Z_angle;
 HairObject::~HairObject()
 {
     for (int i = 0; i < m_guideHairs.size(); ++i)
@@ -58,6 +61,11 @@ bool read_bin(const char *filename, std::vector<Strand>& strands)
 }
 
 bool read_cvhair(const char *filename, std::vector<Strand>& strands, std::vector<glm::vec3>& perStrandColor){
+    glm::mat4 transformation = glm::translate(glm::vec3(0.0,1.7,0.0)) *
+            glm::rotate(X_angle,glm::vec3(1,0,0)) *
+            glm::rotate(Y_angle,glm::vec3(0,1,0)) *
+            glm::rotate(Z_angle,glm::vec3(0,0,1)) *
+            glm::translate(glm::mat4(1.0f),glm::vec3(0.0,-1.7,0.0));
     cyHairFile hairfile;
     hairfile.LoadFromFile(filename);
     int hairCount = hairfile.GetHeader().hair_count;
@@ -104,7 +112,9 @@ bool read_cvhair(const char *filename, std::vector<Strand>& strands, std::vector
                     p0[0]=arrays[3*j];
                     p0[1]=arrays[3*j+1];
                     p0[2]=arrays[3*j+2];
-                    strands[hairIndex].push_back(glm::vec3(p0[0],p0[1],p0[2]));
+                    glm::vec4 temp= transformation *glm::vec4(p0[0],p0[1],p0[2],1.0);
+                //    cout<<p0[0]<<","<<p0[1]<<","<<p0[2]<<","<<temp.x<<","<<temp.y<<","<<temp.z<<endl;
+                    strands[hairIndex].push_back(glm::vec3(temp.x,temp.y,temp.z));
                     //colors[hairIndex].push_back(glm::vec3(r,g,b));
                 }
                 pointIndex += segments[hairIndex]+1;
@@ -119,11 +129,14 @@ bool read_cvhair(const char *filename, std::vector<Strand>& strands, std::vector
                     p0[0]=arrays[3*j];
                     p0[1]=arrays[3*j+1];
                     p0[2]=arrays[3*j+2];
-                    strands[hairIndex].push_back(glm::vec3(p0[0],p0[1],p0[2]));
+                    glm::vec4 temp= transformation *glm::vec4(p0[0],p0[1],p0[2],1.0);
+                //    cout<<p0[0]<<","<<p0[1]<<","<<p0[2]<<","<<temp.x<<","<<temp.y<<","<<temp.z<<endl;
+                    strands[hairIndex].push_back(glm::vec3(temp.x,temp.y,temp.z));
+                    //strands[hairIndex].push_back(glm::vec3(p0[0],p0[1],p0[2]));
                     perStrandColor[hairIndex] += glm::vec3(colorvalue[3*j],colorvalue[3*j+1],colorvalue[3*j+2]);
                     //colors[hairIndex].push_back(glm::vec3(colorvalue[3*j],colorvalue[3*j+1],colorvalue[3*j+2]));
                 }
-                perStrandColor[hairIndex] /= (segments[hairIndex]+1);
+                perStrandColor[hairIndex] /= segments[hairIndex];
                 perStrandColor[hairIndex] /= 255.0f;
                 pointIndex += segments[hairIndex]+1;
                 count+=1;
@@ -132,6 +145,7 @@ bool read_cvhair(const char *filename, std::vector<Strand>& strands, std::vector
         }
         else
             cout<<"none hair segs."<<endl;
+    return true;
 }
 
 HairObject::HairObject(
@@ -288,7 +302,7 @@ void HairObject::update(float _time){
 }
 
 void HairObject::paint(ShaderProgram *program){
-   // program->uniforms.color = glm::rgbColor(glm::vec3(m_color.x*255, m_color.y, m_color.z));
+    program->uniforms.color = glm::rgbColor(glm::vec3(m_color.x*255, m_color.y, m_color.z));
     program->uniforms.numGroupHairs = m_numGroupHairs;
     program->uniforms.hairGroupSpread = m_hairGroupSpread;
     program->uniforms.hairRadius = m_hairRadius;
@@ -307,6 +321,8 @@ void HairObject::paint(ShaderProgram *program){
         //float b = ((float) rand()) / (float) RAND_MAX ;
         //program->uniforms.color = glm::vec3(r,g,b);
         program->uniforms.color = m_guideHairs[i]->perStrandColor;
+     //   cout<<"perStrandColor:"<<m_guideHairs[i]->perStrandColor.x<<","<<m_guideHairs[i]->perStrandColor.y<<","<<m_guideHairs[i]->perStrandColor.z<<endl;
+        //program->uniforms.color = glm::rgbColor(glm::vec3(m_color.x*255, m_color.y, m_color.z));
         program->setPerObjectUniforms();
         m_guideHairs.at(i)->paint(program);
     }

@@ -10,22 +10,33 @@
 
 #define _ELLIPSOID_COLISIONS_ true
 
+extern float X_angle;
+extern float Y_angle;
+extern float Z_angle;
 ObjMesh::ObjMesh()
 {
 }
 
 void ObjMesh::init(const char *objFile, float scale)
 {
+    glm::mat4 transformation = glm::translate(glm::vec3(0.0,1.7,0.0)) *
+            glm::rotate(X_angle,glm::vec3(1,0,0)) *
+            glm::rotate(Y_angle,glm::vec3(0,1,0)) *
+            glm::rotate(Z_angle,glm::vec3(0,0,1)) *
+            glm::translate(glm::mat4(1.0f),glm::vec3(0.0,-1.7,0.0));
+
     if(strstr(objFile,".obj") || strstr(objFile,".OBJ")){
         std::vector<glm::vec3> vertices;
         std::vector<glm::vec2> uvs;
         std::vector<glm::vec3> normals;
         bool loaded = OBJLoader::loadOBJ(objFile, vertices, uvs, normals);
 
-        cout<<vertices[0][0]<<","<<vertices[0][1]<<","<<vertices[0][2]<<endl;
-        cout<<vertices[1][0]<<","<<vertices[1][1]<<","<<vertices[1][2]<<endl;
-        cout<<vertices[2][0]<<","<<vertices[2][1]<<","<<vertices[2][2]<<endl;
-
+        for(int i=0;i<vertices.size();++i){
+            glm::vec4 temp = transformation * glm::vec4(vertices[i],1.0);
+            vertices[i].x = temp.x;
+            vertices[i].y = temp.y;
+            vertices[i].z = temp.z;
+        }
         if (!loaded) {
             printf("Failed to load OBJ: %s\n", objFile);
             exit(1);
@@ -70,6 +81,12 @@ void ObjMesh::init(const char *objFile, float scale)
             bool normal = true,color = true;
             PlyModel plymodel;
             bool loaded = plymodel.loadPly(objFile,normal,color);
+            for(int i=0;i<plymodel.xyz.size();++i){
+                glm::vec4 temp = transformation * glm::vec4(plymodel.xyz[i],1.0);
+                plymodel.xyz[i].x = temp.x;
+                plymodel.xyz[i].y = temp.y;
+                plymodel.xyz[i].z = temp.z;
+            }
             plymodel.createBuffer();
           //  cout<<plymodel.xyz_buffer[0][0]<<","<<plymodel.xyz_buffer[0][1]<<","<<plymodel.xyz_buffer[0][2]<<endl;
           //  cout<<plymodel.xyz_buffer[1][0]<<","<<plymodel.xyz_buffer[1][1]<<","<<plymodel.xyz_buffer[1][2]<<endl;

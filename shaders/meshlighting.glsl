@@ -34,7 +34,7 @@ vec4 meshLighting(in vec4 position_WS, in vec4 normal_WS, in vec3 color_v) {
     color.xyz += FILL_LIGHT_INTENSITY_MESH * colorContribution(position_WS, normal_WS, FILL_LIGHT_POS);
 
     // Ambient light
-    color.xyz += MESH_AMBIENT_INTENSITY * meshColor;
+  //  color.xyz += MESH_AMBIENT_INTENSITY * meshColor;
 
     return color;
 }

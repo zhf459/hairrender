@@ -123,7 +123,7 @@ void GLWidget::initializeGL()
     m_noiseTexture->createColorTexture(":/images/noise128.jpg", GL_LINEAR, GL_LINEAR);
 
     // Initialize framebuffers.
-    int shadowMapRes = 2048;
+    int shadowMapRes = 4096;
     glm::vec2 finalSize = glm::vec2(2 * width(), 2 * height());
     for (auto framebuffer = m_framebuffers.begin(); framebuffer != m_framebuffers.end(); ++framebuffer)
         (*framebuffer)->create();
@@ -172,7 +172,9 @@ void GLWidget::paintGL()
     // Update transformation matrices.
     glm::mat4 model = glm::mat4(1.f);
     model = m_testSimulation->m_xform;
-    m_lightPosition = glm::vec3(2, 2, 2);
+    //m_lightPosition = glm::vec3(2.0, 2.0, 2.0);
+    //cout<<"set m_lightposition"<<endl;
+    //m_lightPosition = glm::vec3(0.5, 1.5, 2);
     glm::mat4 lightProjection = glm::perspective(1.3f, 1.f, .1f, 100.f);
     glm::mat4 lightView = glm::lookAt(m_lightPosition, glm::vec3(0), glm::vec3(0,1,0));
     m_eyeToLight = lightProjection * lightView * glm::inverse(m_view);
@@ -217,7 +219,7 @@ void GLWidget::paintGL()
         // Render mesh shadow map.
         m_meshShadowFramebuffer->bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        _drawMesh(m_whiteMeshProgram, model, lightView, lightProjection);
+        //_drawMesh(m_whiteMeshProgram, model, lightView, lightProjection);
 
         // Enable additive blending for opacity map.
         glDisable(GL_DEPTH_TEST);
@@ -474,7 +476,7 @@ void GLWidget::initSimulation()
     m_hairInterface->setMesh(m_highResMesh);
 
     m_lowResMesh = new ObjMesh();
-    m_lowResMesh->init(":/models/headLowRes.obj", 1.1);
+    m_lowResMesh->init(headmodel_file.c_str(), 1.1);
 
     Simulation *_oldSim = m_testSimulation;
     m_testSimulation = new Simulation(this, m_lowResMesh, _oldSim);
@@ -511,20 +513,20 @@ void GLWidget::initCamera(){
     //
     // Adjust position for USC dataset
     //
-    m_angleX = X_angle;
-    m_angleY = Y_angle;
-    float m_angleZ = Z_angle;
-    m_zoom = 0.75;
+    m_angleX = 0.0;
+    m_angleY = 0.0;
+    m_zoom = 0.7;
 
     // Initialize global view and projection matrices.
     m_view = glm::translate(glm::vec3(0, 0, -m_zoom)) *
-            glm::rotate(m_angleY, glm::vec3(1, 0, 0)) *
-            glm::rotate(m_angleZ, glm::vec3(0 , 0, 1)) *
+            glm::rotate(m_angleX, glm::vec3(1, 0, 0)) *
             glm::translate(glm::mat4(1.0f), glm::vec3(0, -1.7, 0)) *
-            glm::rotate(m_angleX, glm::vec3(0, 1, 0));
+            glm::rotate(m_angleY, glm::vec3(0, 1, 0));
 
     m_projection = glm::perspective(0.8f, (float)width()/height(), 0.1f, 100.f);
 
+    m_lightPosition = glm::vec3(0.0,2.7,2.0);
+    cout<<"initial"<<endl;
 }
 
 void GLWidget::applySceneEditor(Texture *_hairGrowthTexture, Texture *_hairGroomingTexture){
@@ -603,19 +605,25 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
     if (event->buttons() == Qt::LeftButton)
     {
 #endif
-        glm::vec3 up = glm::normalize(glm::vec3(m_view[2][1], m_view[2][2], m_view[2][3]));
-        glm::mat4 inverseView = glm::inverse(m_view);
-        glm::vec3 look = glm::normalize(glm::vec3(inverseView * glm::vec4(0, 0, -1.0, 1)));
+        m_lightPosition.x +=  (event->x() - m_prevMousePos.x()) / (float) width();
+        m_lightPosition.y +=  (event->y() - m_prevMousePos.y()) / (float) height();
+        cout<<m_lightPosition.x<<","<<m_lightPosition.y<<","<<m_lightPosition.z<<endl;
+        // Adjust for USC dataset
+
+        m_prevMousePos = event->pos();
+       /*glm::vec3 up = glm::normalize(glm::vec3(m_view[2][1], m_view[2][2], m_view[2][3]));
+       glm::mat4 inverseView = glm::inverse(m_view);
+       glm::vec3 look = glm::normalize(glm::vec3(inverseView * glm::vec4(0, 0, -1.0, 1)));
 //        cout << "up: " << glm::to_string(up) << endl;
 //        cout << "look: " << glm::to_string(look) << endl;
-        glm::vec3 right = glm::cross(up, look);
-        QPoint delta = event->pos() - m_prevXformPos;
+       glm::vec3 right = glm::cross(up, look);
+       QPoint delta = event->pos() - m_prevXformPos;
         glm::vec3 xform = glm::vec3();
         xform += (float) delta.x() * 0.005f * right;
         xform += (float) -delta.y() * 0.005f * up;
         if (look.z < 0.0) xform = -xform;
         m_testSimulation->updatePosition(m_hairObject, xform);
-        m_prevXformPos = event->pos();
+        m_prevXformPos = event->pos();*/
     }
 
 #if SHIFT_CLICK
