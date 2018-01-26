@@ -6,11 +6,11 @@ Makefile
 qrc_*.cpp
 hair
 
-
+autohair/
 *.stash
-
+hairfile/
 *.autosave
-
+samplefiles/
 ui_sceneeditor.h
 
 hair.app/Contents/MacOS/output.png

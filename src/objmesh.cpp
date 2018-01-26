@@ -19,11 +19,11 @@ ObjMesh::ObjMesh()
 
 void ObjMesh::init(const char *objFile, float scale)
 {
-    glm::mat4 transformation = glm::translate(glm::vec3(0.0,1.7,0.0)) *
+    glm::mat4 transformation = glm::translate(glm::vec3(-0.0006 ,   1.7158 ,   0.0456)) *
             glm::rotate(X_angle,glm::vec3(1,0,0)) *
             glm::rotate(Y_angle,glm::vec3(0,1,0)) *
             glm::rotate(Z_angle,glm::vec3(0,0,1)) *
-            glm::translate(glm::mat4(1.0f),glm::vec3(0.0,-1.7,0.0));
+            glm::translate(glm::mat4(1.0f),glm::vec3(0.0006 ,   -1.7158 ,   -0.0456));
 
     if(strstr(objFile,".obj") || strstr(objFile,".OBJ")){
         std::vector<glm::vec3> vertices;
@@ -36,7 +36,12 @@ void ObjMesh::init(const char *objFile, float scale)
             vertices[i].x = temp.x;
             vertices[i].y = temp.y;
             vertices[i].z = temp.z;
-        }
+            glm::vec4 normtemp = transformation * glm::vec4(normals[i],1.0);
+            normals[i].x = normtemp.x;
+            normals[i].y = normtemp.y;
+            normals[i].z = normtemp.z;
+            normals[i]=glm::normalize(normals[i]);
+         }
         if (!loaded) {
             printf("Failed to load OBJ: %s\n", objFile);
             exit(1);
@@ -86,6 +91,11 @@ void ObjMesh::init(const char *objFile, float scale)
                 plymodel.xyz[i].x = temp.x;
                 plymodel.xyz[i].y = temp.y;
                 plymodel.xyz[i].z = temp.z;
+                glm::vec4 normtemp = transformation * glm::vec4(plymodel.normals[i],1.0);
+                plymodel.normals[i].x = normtemp.x;
+                plymodel.normals[i].y = normtemp.y;
+                plymodel.normals[i].z = normtemp.z;
+                plymodel.normals[i]=glm::normalize(plymodel.normals[i]);
             }
             plymodel.createBuffer();
           //  cout<<plymodel.xyz_buffer[0][0]<<","<<plymodel.xyz_buffer[0][1]<<","<<plymodel.xyz_buffer[0][2]<<endl;

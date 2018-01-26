@@ -249,51 +249,51 @@ compiler_rcc_make_all: debug/qrc_shaders.cpp debug/qrc_models.cpp debug/qrc_imag
 compiler_rcc_clean:
 	-$(DEL_FILE) debug/qrc_shaders.cpp debug/qrc_models.cpp debug/qrc_images.cpp
 debug/qrc_shaders.cpp: shaders/shaders.qrc \
-		shaders/hairFeedback.tes \
-		shaders/meshdepthpeel.frag \
-		shaders/hairOpacity.frag \
-		shaders/hairrender.vert \
-		shaders/hairrender.vert \
-		shaders/constants.glsl \
-		shaders/hairlighting.glsl \
-		shaders/hair.tes \
-		shaders/opacitymapping.glsl \
-		shaders/hair.geom \
-		shaders/hairFeedback.geom \
-		shaders/hair.vert \
-		shaders/texturedquad.vert \
-		shaders/mesh.vert \
-		shaders/hair.tcs \
-		shaders/white.frag \
 		shaders/hair.frag \
 		shaders/depthpeel.glsl \
+		shaders/opacitymapping.glsl \
 		shaders/hairDepthPeel.frag \
-		shaders/texturedquad.frag \
 		shaders/meshlighting.glsl \
-		shaders/mesh.frag
+		shaders/mesh.frag \
+		shaders/hair.tes \
+		shaders/hairFeedback.geom \
+		shaders/constants.glsl \
+		shaders/hair.geom \
+		shaders/hairlighting.glsl \
+		shaders/texturedquad.vert \
+		shaders/meshdepthpeel.frag \
+		shaders/hairrender.vert \
+		shaders/hairrender.vert \
+		shaders/hair.vert \
+		shaders/hair.tcs \
+		shaders/hairFeedback.tes \
+		shaders/hairOpacity.frag \
+		shaders/mesh.vert \
+		shaders/white.frag \
+		shaders/texturedquad.frag
 	/usr/lib/x86_64-linux-gnu/qt5/bin/rcc -name shaders shaders/shaders.qrc -o debug/qrc_shaders.cpp
 
 debug/qrc_models.cpp: models/models.qrc \
-		models/dude_highres.obj \
-		models/dude_lowres.obj \
-		models/headLowRes.obj \
 		models/cube.obj \
 		models/sphere.obj \
-		models/head.obj
+		models/dude_lowres.obj \
+		models/dude_highres.obj \
+		models/head.obj \
+		models/headLowRes.obj
 	/usr/lib/x86_64-linux-gnu/qt5/bin/rcc -name models models/models.qrc -o debug/qrc_models.cpp
 
 debug/qrc_images.cpp: images/images.qrc \
 		images/lower.png \
 		images/white.jpg \
+		images/dude_hairmap_inv.jpg \
+		images/headHairSideburns.jpg \
+		images/headHair.jpg \
+		images/upper.png \
 		images/chevron_down.png \
 		images/dude_hairmap.jpg \
-		images/upper.png \
-		images/headHair.jpg \
-		images/headHairSideburns.jpg \
 		images/chevron_up.png \
-		images/dude_hairmap_inv.jpg \
-		images/dude_hairmap.png \
-		images/noise128.jpg
+		images/noise128.jpg \
+		images/dude_hairmap.png
 	/usr/lib/x86_64-linux-gnu/qt5/bin/rcc -name images images/images.qrc -o debug/qrc_images.cpp
 
 compiler_moc_header_make_all: debug/moc_mainwindow.cpp debug/moc_glwidget.cpp debug/moc_hairinterface.cpp debug/moc_sceneeditor.cpp debug/moc_scenewidget.cpp

@@ -11,7 +11,7 @@ out float colorVariation_te;
 //out vec3 WS_tangent;
 //out float tessx;
 
-const int MAX_VERTICES = 64; // Max number of hair vertices
+const int MAX_VERTICES = 300; // Max number of hair vertices
 
 // Constants for applying noise to vertex positions.
 const int NOISE_OCTAVES = 3;

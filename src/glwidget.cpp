@@ -515,17 +515,24 @@ void GLWidget::initCamera(){
     //
     m_angleX = 0.0;
     m_angleY = 0.0;
-    m_zoom = 0.7;
+    m_zoom =0.7;
 
+//    m_view = glm::lookAt(glm::vec3(0,1.7,0.5),
+ //                        glm::vec3(0,1.7,0),
+  //                       glm::vec3(0,1,0)
+  //                       );
     // Initialize global view and projection matrices.
+    // -0.0456
     m_view = glm::translate(glm::vec3(0, 0, -m_zoom)) *
             glm::rotate(m_angleX, glm::vec3(1, 0, 0)) *
-            glm::translate(glm::mat4(1.0f), glm::vec3(0, -1.7, 0)) *
+        //    glm::translate(glm::mat4(1.0f), glm::vec3(0,   -1.7,   0) )*
+           glm::translate(glm::mat4(1.0f), glm::vec3(0.0006 ,   -1.7158 ,   -0.0456) )*
             glm::rotate(m_angleY, glm::vec3(0, 1, 0));
 
-    m_projection = glm::perspective(0.8f, (float)width()/height(), 0.1f, 100.f);
+    m_projection = glm::perspective(0.8f, (float)width()/height(), 0.1f, 100.0f);
 
-    m_lightPosition = glm::vec3(0.0,2.7,2.0);
+   // m_lightPosition = glm::vec3(0.0,2.7,2.0);
+    m_lightPosition = glm::vec3(0.0,2.3,2.0);
     cout<<"initial"<<endl;
 }
 
@@ -593,7 +600,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
         // Adjust for USC dataset
         m_view = glm::translate(glm::vec3(0, 0, -m_zoom)) *
             glm::rotate(m_angleY, glm::vec3(1, 0, 0)) *
-            glm::translate(glm::mat4(1.0f), glm::vec3(0, -1.7, 0)) *
+            glm::translate(glm::mat4(1.0f), glm::vec3(0.0006 ,   -1.7158 ,   -0.0456)) *
             glm::rotate(m_angleX, glm::vec3(0, 1, 0));
         m_prevMousePos = event->pos();
     }

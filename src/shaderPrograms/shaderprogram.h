@@ -5,7 +5,7 @@
 #include <map>
 #include <string>
 
-#define MAX_HAIR_VERTICES 64
+#define MAX_HAIR_VERTICES 300
 
 struct Uniforms {
     glm::mat4 model, view, projection;

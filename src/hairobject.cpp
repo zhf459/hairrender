@@ -61,11 +61,11 @@ bool read_bin(const char *filename, std::vector<Strand>& strands)
 }
 
 bool read_cvhair(const char *filename, std::vector<Strand>& strands, std::vector<glm::vec3>& perStrandColor){
-    glm::mat4 transformation = glm::translate(glm::vec3(0.0,1.7,0.0)) *
+    glm::mat4 transformation = glm::translate(glm::vec3(-0.0006 ,   1.7158 ,   0.0456)) *
             glm::rotate(X_angle,glm::vec3(1,0,0)) *
             glm::rotate(Y_angle,glm::vec3(0,1,0)) *
             glm::rotate(Z_angle,glm::vec3(0,0,1)) *
-            glm::translate(glm::mat4(1.0f),glm::vec3(0.0,-1.7,0.0));
+            glm::translate(glm::mat4(1.0f),glm::vec3(0.0006 ,   -1.7158 ,   -0.0456));
     cyHairFile hairfile;
     hairfile.LoadFromFile(filename);
     int hairCount = hairfile.GetHeader().hair_count;
